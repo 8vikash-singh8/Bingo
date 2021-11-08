@@ -270,11 +270,10 @@ public class GameActivity extends AppCompatActivity {
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             if (convertView == null) {
                 convertView = LayoutInflater.from(context).inflate(R.layout.grid_cell_text, parent, false);
-                convertView.setMinimumHeight((parent.getHeight()/5)-10);
-                TextView tv = convertView.findViewById(R.id.cell_text);
-                tv.setText(" ");
-                
             }
+            convertView.setMinimumHeight((parent.getHeight()/5)-10);
+            TextView tv = convertView.findViewById(R.id.cell_text);
+            tv.setText(" ");
             return convertView;
         }
 

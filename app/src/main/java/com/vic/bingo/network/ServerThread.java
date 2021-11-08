@@ -225,9 +225,10 @@ public class ServerThread extends Thread {
                         else
                             data.setNumberCrossed(READY);
 
-                        if(!winRound)
+                        if (!winRound) {
                             sendTurn = true;
-                        turnCount = (turnCount + 1) % playerList.size();
+                            turnCount = (turnCount + 1) % playerList.size();
+                        }
                     } else {
                         if (playerList.get(turnCount).equals(playerName)) {
                             data.setNumberCrossed(number);

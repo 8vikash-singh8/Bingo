@@ -153,6 +153,22 @@ public class ServerThread extends Thread {
         }
     }
 
+    //send received data to all player except turn player and receive winning condition
+    private void sendDataToAllAndCheckWin(CommunicationData data) {
+        sendData(data, true, turnCount);
+        int count = -1;
+        for (ObjectInputStream inputStream : clientInputStream) {
+            count += 1;
+            if(turnCount == count)
+                continue;
+            data = receiveData(inputStream);
+            if (data.getWinner()) {
+                winnersName.append(playerList.get(turnCount)).append(", ");
+                winRound = true;
+            }
+        }
+    }
+
     private class NetworkHandler extends Handler {
 
         public NetworkHandler(Looper looper) {
@@ -193,6 +209,7 @@ public class ServerThread extends Thread {
                         sendData(data, false, 0);
                         sendTurn = false;
                     } else if (!winRound) {
+                        //get data from turn player other than server
                         if(!playerList.get(turnCount).equals(playerName)) {
                             data = receiveData(clientInputStream.get(turnCount));
                             number = data.getNumberCrossed();
@@ -202,35 +219,19 @@ public class ServerThread extends Thread {
                             }
                         }
                         data.setNumberCrossed(number);
-                        sendData(data, true, turnCount);
-                        int count = -1;
-                        for (ObjectInputStream inputStream : clientInputStream) {
-                            count += 1;
-                            if(turnCount == count)
-                                continue;
-                            data = receiveData(inputStream);
-                            if (data.getWinner()) {
-                                winnersName.append(playerList.get(turnCount)).append(", ");
-                                winRound = true;
-                            }
-                        }
+                        sendDataToAllAndCheckWin(data);
                         if(!playerList.get(turnCount).equals(playerName))
                             data.setNumberCrossed(number);
                         else
                             data.setNumberCrossed(READY);
-                        sendTurn = true;
+
+                        if(!winRound)
+                            sendTurn = true;
                         turnCount = (turnCount + 1) % playerList.size();
                     } else {
                         if (playerList.get(turnCount).equals(playerName)) {
                             data.setNumberCrossed(number);
-                            sendData(data, true, turnCount);
-                            for (ObjectInputStream inputStream : clientInputStream) {
-                                data = receiveData(inputStream);
-                                if (data.getWinner()) {
-                                    winnersName.append(playerList.get(turnCount)).append(", ");
-                                    winRound = true;
-                                }
-                            }
+                            sendDataToAllAndCheckWin(data);
                         }
                         data.setPlayerName(winnersName.toString());
                         data.setWinner(true);

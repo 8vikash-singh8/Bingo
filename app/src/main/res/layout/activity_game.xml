@@ -147,7 +147,6 @@
             android:padding="5dp"
             android:text="BACK"
             android:textSize="14dp"
-            android:enabled="false"
             android:onClick="goBack"/>
     </LinearLayout>
 

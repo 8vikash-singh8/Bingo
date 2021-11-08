@@ -33,11 +33,11 @@ public class ServerThread extends Thread {
     ArrayList<ObjectOutputStream> clientOutputStream;
     ArrayList<ObjectInputStream> clientInputStream;
     String playerName;
-    boolean winRound = false;
-    boolean sendTurn = false;
-    int number = 0;
-    int readyCount = 0;
-    int turnCount = 0;
+    boolean winRound;
+    boolean sendTurn;
+    int number;
+    int readyCount;
+    int turnCount;
     StringBuilder winnersName;
 
     public ServerThread(String name) {
@@ -48,7 +48,7 @@ public class ServerThread extends Thread {
         clientOutputStream = new ArrayList<>();
         controller = getController();
         playerName = name;
-        winnersName = new StringBuilder().append("Player ");
+        init();
     }
 
     @Override
@@ -57,6 +57,14 @@ public class ServerThread extends Thread {
         Looper.prepare();
         controller.setNetworkHandler(new NetworkHandler(Looper.myLooper()));
         Looper.loop();
+    }
+
+    private void init() {
+        winnersName = new StringBuilder().append("Player ");
+        winRound = false;
+        sendTurn = false;
+        readyCount = 0;
+        turnCount = 0;
     }
 
     public void close() {
@@ -163,7 +171,7 @@ public class ServerThread extends Thread {
                 continue;
             data = receiveData(inputStream);
             if (data.getWinner()) {
-                winnersName.append(playerList.get(turnCount)).append(", ");
+                winnersName.append(playerList.get(count)).append(", ");
                 winRound = true;
             }
         }
@@ -243,6 +251,9 @@ public class ServerThread extends Thread {
                     break;
                 case CLOSE_THREAD:
                     close();
+                    break;
+                case PLAY_AGAIN:
+                    init();
                     break;
                 default:
                     Log.e(TAG, "Message not expected!!! " + msg.what);

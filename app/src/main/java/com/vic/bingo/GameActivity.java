@@ -131,15 +131,24 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void playAgain(View view) {
+        Message msg = controller.obtainMessage(PLAY_AGAIN);
+        controller.dispatchMessage(msg);
         Intent intent = new Intent(this, GameActivity.class);
         startActivity(intent);
         finish();
     }
 
     public void goBack(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
+        gameHandler.postDelayed(() -> exitCount = 0, 3000);
+        exitCount += 1;
+        Toast.makeText(this, "Press again to leave game screen!!!", Toast.LENGTH_SHORT).show();
+        if (exitCount >= 2) {
+            Intent intent = new Intent(this, WifiService.class);
+            stopService(intent);
+            Intent intent1 = new Intent(this, MainActivity.class);
+            startActivity(intent1);
+            finish();
+        }
     }
 
     private void processData(CommunicationData data) {
@@ -240,7 +249,7 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        gameHandler.postAtTime(() -> exitCount = 0, 5000);
+        gameHandler.postDelayed(() -> exitCount = 0, 3000);
         exitCount += 1;
         Toast.makeText(this, "Press again to exit!!", Toast.LENGTH_SHORT).show();
         if (exitCount >= 2) {

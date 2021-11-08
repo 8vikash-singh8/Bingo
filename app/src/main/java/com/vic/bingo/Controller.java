@@ -65,6 +65,7 @@ public class Controller extends Handler {
             case SEND_DATA:
             case RECEIVE_DATA:
             case CLOSE_THREAD:
+            case PLAY_AGAIN:
                 if (networkHandler != null)
                     networkHandler.sendMessage(msg);
                 break;

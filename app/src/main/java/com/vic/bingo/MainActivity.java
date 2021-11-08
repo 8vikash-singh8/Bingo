@@ -198,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setNegativeButton("Cancel", (dialog, which) -> {
             if (alertDialog.isShowing())
                 alertDialog.dismiss();
+            isServer = false;
             Message msg = controller.obtainMessage(GROUP_CANCELLED);
             controller.dispatchMessage(msg);
         });
